@@ -33,7 +33,6 @@ def get_page_info(targets: List[str]=page_input) -> List[str]:
 # )
 
 if __name__ == "__main__":
-    print(get_page_info.invoke({"targets":page_input}))
-    print(get_page_info)
-    # print(click_taget_tool.invoke("申請人"))
-    # print(type_text_tool.invoke("王小明"))
+    # print(get_page_info.invoke({"targets":page_input}))
+    # print(click_target_tool.invoke("申請人"))
+    print(type_text_tool.invoke({"obj":"申請人","text":"王小明"}))

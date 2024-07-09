@@ -6,44 +6,35 @@ from langchain_core.runnables import (
     RunnablePassthrough,
 )
 
+def route(tools_list, tool_name, **kwargs):
+    for tool in tools_list:
+        print("tool", tool.name)
+        if tool_name in tool.name:
+            return tool.invoke({**kwargs})
+    return f"Do not find tool named {tool_name} "
 
-def main():
+def classify_chain():
     from model_setting import get_llm
     from agent_tool.fast_tool import click_target_tool, type_text_tool, get_page_info
-    from agent_chain.retrieverQA_chain import create_vectordb, indexing, rag_chain
+    from langchain_core.output_parsers import StrOutputParser
+    from langchain_core.prompts import PromptTemplate
+    from prompts.fast_prompt import router_template
+    chain = (
+        PromptTemplate.from_template(
+            router_template
+        )
+        | get_llm(model_name="breeze")
+        | StrOutputParser()
+    )
 
-    # rag_llm = get_llm(model_name="breeze")
-    # rag_chain(rag_llm, query="我想請假應該使用什麼功能呢")
-    
-    required_params = {
-        "必填": ["申請人", "單位", "請假類型", "開始日期", "結束日期"],
-        "可選": ["代班人員", "請假事由", "備註"],
-    }
-
-    
-    indexing(doc_name="leave_info.txt")
-    # step2 = rag_chain(get_llm(model_name="breeze"), doc_name="leave_info.txt")
-    # step2.invoke({"input":"how many variables need to fill?"})
-    
-
-    # agent = create_react_agent(llm, tools, prompt)
-
-    # agent_executor = AgentExecutor(
-    #     agent=llm, 
-    #     tools=tools,     
-    #     agent_executor_kwargs={"call_tools": call_tools},
-    #     handle_parsing_errors=True,
-    #     verbose=True
-    # )
-
-
-    # question = "填好請假表"
-    # question = "點擊申請人旁邊的按鈕，後輸入王小明"
-    # question = "輸入王小明"
-    # agent_executor.invoke({"input": question})
+    tools = [click_target_tool, type_text_tool, get_page_info]
+    result=chain.invoke({"task": "I want to click the button next to 病假 "})
+    print(route(tools, result.strip(), obj="病假"))
+    # result = chain.invoke({"task": "typing 王小明 to inputbox 申請人"})
+    # print(route(tools, "type_text_tool", text="王小明", obj="申請人"))
 
 
 if __name__ == "__main__":
     import os, sys
     sys.path.append(os.getcwd())
-    main()
+    classify_chain()

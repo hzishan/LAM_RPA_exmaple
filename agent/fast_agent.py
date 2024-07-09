@@ -27,9 +27,7 @@ agent_executor = AgentExecutor(
     verbose=True
 )
 
-question = "填好請假表"
-# question = "點擊申請人旁邊的按鈕，後輸入王小明"
-# question = "輸入王小明"
+question = "I want to click the button next to \"病假\" "
 agent_executor.invoke({"input": question})
 
  
