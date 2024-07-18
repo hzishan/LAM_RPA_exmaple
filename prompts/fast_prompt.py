@@ -16,9 +16,9 @@ order_template = """
 """
 
 tool_route_template = """
-    Given the user task below, classify it as one of the following tools: {tools}.
-    And return only tool_name(variables) in the response.
-    For example: type_text_tool("申請人", "王小明")
+    Given the user task below, classify it as either being about {tools}.
+    Do not respond with more than one word.
+
     <question>
     {task}
     </question>

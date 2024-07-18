@@ -5,25 +5,24 @@ from langchain.prompts import (
 )
 
 # direct using RetriverQA chain_type_kwargs={"prompt": RAG_prompt_v1}
-RAG_prompt_v1 = PromptTemplate(
+rag_prompt_v1 = PromptTemplate(
     input_variables=["input"],
     template="""
-    {context}: 根據文件的舉例，幫我依照格式拆解並回答問題。
-    Instruction: 幫我用中文回答以下問題，再找不到答案，請回答：“我無法回答這個問題”。
+    Instruction: 根據文件搜尋出最適合答案，並用繁體中文回答問題，如果是文件中的功能名稱則不需要翻譯。
     Question: {input}
+    Context: {context}
     Answer: 
     """
 )
 
-RAG_prompt_v2 = PromptTemplate(
-    input_variables=["question"],
-    template="""
-    Instruction: You are an assistant for question-answering tasks. Use the following pieces of retrieved context to answer the question.
-    Question: {question}
-    Answer: {context}
+# create_stuff_documents_chain needs context variable in prompt
+rag_prompt_v2 = PromptTemplate.from_template(
+    """
+    {context}: 根據文件用繁體中文回答問題，如果是文件中的功能名稱則不需要翻譯。
+    Question: {input}
+    Answer: 
     """
 )
-
 
 # llm_chain = LLMChain(llm=llm, prompt=RAG_prompt_taide, verbose=True)
 RAG_prompt_taide = PromptTemplate(
